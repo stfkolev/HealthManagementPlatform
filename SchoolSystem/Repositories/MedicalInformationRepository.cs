@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolSystem.Contexts;
 using SchoolSystem.Entities;
+using SchoolSystem.Entities;
 using SchoolSystem.Repositories.Contracts;
 using System;
 using System.Collections.Generic;
@@ -9,26 +10,26 @@ using System.Threading.Tasks;
 
 namespace SchoolSystem.Repositories
 {
-    public class GenderRepository : IGenderRepository<Gender>
+    public class MedicalInformationRepository : IMedicalInformationRepository<MedicalInformation>
     {
         readonly MainContext mainContext;
 
-        public GenderRepository(MainContext context)
+        public MedicalInformationRepository(MainContext context)
         {
             mainContext = context;
         }
 
-        public async Task<IEnumerable<Gender>> GetAll()
+        public async Task<IEnumerable<MedicalInformation>> GetAll()
         {
-            return await mainContext.Genders.ToListAsync();
+            return await mainContext.MedicalInformation.ToListAsync();
         }
 
-        public async Task<Gender> Get(int id)
+        public async Task<MedicalInformation> Get(int id)
         {
-            return await mainContext.Genders.FindAsync(id);
+            return await mainContext.MedicalInformation.FindAsync(id);
         }
 
-        public async Task<Gender> Add(Gender obj)
+        public async Task<MedicalInformation> Add(MedicalInformation obj)
         {
             var result = await mainContext.AddAsync(obj);
             await mainContext.SaveChangesAsync();
@@ -36,7 +37,7 @@ namespace SchoolSystem.Repositories
             return result.Entity;
         }
 
-        public async Task<Gender> Update(int id, Gender obj)
+        public async Task<MedicalInformation> Update(int id, MedicalInformation obj)
         {
             mainContext.Entry(obj).State = EntityState.Modified;
             //result.Name = obj.Name;
@@ -47,11 +48,11 @@ namespace SchoolSystem.Repositories
 
         public async Task Delete(int id)
         {
-            var result = await mainContext.Genders.FindAsync(id);
+            var result = await mainContext.MedicalInformation.FindAsync(id);
 
             if(result != null)
             {
-                mainContext.Genders.Remove(result);
+                mainContext.MedicalInformation.Remove(result);
                 await mainContext.SaveChangesAsync();
             }
         }

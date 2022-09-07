@@ -12,27 +12,27 @@ namespace SchoolSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GendersController : ControllerBase
+    public class MedicalInformationController : ControllerBase
     {
-        private readonly IGenderRepository<Gender> _genderRepository;
+        private readonly IMedicalInformationRepository<MedicalInformation> _genderRepository;
 
-        public GendersController(IGenderRepository<Gender> genderRepository)
+        public MedicalInformationController(IMedicalInformationRepository<MedicalInformation> genderRepository)
         {
             _genderRepository = genderRepository;
         }
 
-        // GET: api/<GenderController>
+        // GET: api/<MedicalInformationController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Gender>>> Get()
+        public async Task<ActionResult<IEnumerable<MedicalInformation>>> Get()
         {
             var genders = await _genderRepository.GetAll();
 
             return Ok(genders);
         }
 
-        // GET api/<GenderController>/5
+        // GET api/<MedicalInformationController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Gender>> Get(int id)
+        public async Task<ActionResult<MedicalInformation>> Get(int id)
         {
             var gender = await _genderRepository.Get(id);
 
@@ -44,16 +44,16 @@ namespace SchoolSystem.Controllers
             return gender;
         }
 
-        // POST api/<GenderController>
+        // POST api/<MedicalInformationController>
         [HttpPost]
-        public async Task<ActionResult<Gender>> Post(Gender gender)
+        public async Task<ActionResult<MedicalInformation>> Post(MedicalInformation gender)
         {
             return await _genderRepository.Add(gender);
         }
 
-        // PUT api/<GenderController>/5
+        // PUT api/<MedicalInformationController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Gender>> Put(int id, Gender gender)
+        public async Task<ActionResult<MedicalInformation>> Put(int id, MedicalInformation gender)
         {
             if(id != gender.Id)
             {
@@ -63,7 +63,7 @@ namespace SchoolSystem.Controllers
             return await _genderRepository.Update(id, gender);
         }
 
-        // DELETE api/<GenderController>/5
+        // DELETE api/<MedicalInformationController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

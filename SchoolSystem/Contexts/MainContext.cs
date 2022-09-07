@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SchoolSystem.Models;
+using SchoolSystem.Entities;
+using SchoolSystem.Entities;
 using System;
 
 namespace SchoolSystem.Contexts
@@ -27,5 +28,6 @@ namespace SchoolSystem.Contexts
         public DbSet<Student> Students {  get; set; }
         public DbSet<Gender> Genders {  get; set; }
         public DbSet<Grade> Grades {  get; set; }
+        public DbSet<MedicalInformation> MedicalInformation {  get; set; }
     }
 }

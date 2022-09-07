@@ -1,5 +1,5 @@
 ﻿using SchoolSystem.Entities.Facades;
-using SchoolSystem.Models;
+using SchoolSystem.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

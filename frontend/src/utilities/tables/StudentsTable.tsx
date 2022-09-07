@@ -39,19 +39,35 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 	const [visible, setVisible] = useState(false);
 	const [activeModalId, setActiveModalId] = useState(BigInt(0));
 
+	const [gradeFilters, setGradeFilters] = useState<any[]>([]);
+	const [genderFilters, setGenderFilters] = useState<any[]>([]);
+
 	useEffect(() => {
 		GetGenders().then((values) => {
 			setGenders(values);
+			setGenderFilters([]);
+			values.forEach((data) =>
+				genderFilters.push({ text: data.name, value: data.name }),
+			);
+			setGenderFilters(genderFilters);
 		});
 		GetMedicalInformations().then((values) => {
 			setMedicalInformations(values);
 		});
 		GetGrades().then((values) => {
 			setGrades(values);
+			setGradeFilters([]);
+			values.forEach((data) =>
+				gradeFilters.push({ text: data.name, value: data.name }),
+			);
+			setGradeFilters(gradeFilters);
 		});
 	}, []);
 
-	const onEditInternal = async (values: Student) => {
+	const onEditInternal = async (
+		values: Student,
+		medicalInformation: MedicalInformation,
+	) => {
 		const result = await UpdateStudent({
 			id: values.id,
 			name: values.name,
@@ -148,39 +164,16 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 					};
 				}}
 			/>
-			{/* 
-			<Column
-				title='Luggage Space'
-				dataIndex='luggageSpace'
-				render={(value, record, index) => (value ? 'Yes' : 'No')}
-				filters={[
-					{
-						text: 'Yes',
-						value: true,
-					},
-					{
-						text: 'No',
-						value: false,
-					},
-				]}
-				filterMultiple={false}
-				onFilter={(value, record) => {
-					return (record as Student).luggageSpace === value;
-				}}
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
-
-							openNotification(student);
-						},
-					};
-				}}
-			/> */}
 
 			<Column
 				title='Клас'
 				dataIndex='gradeId'
+				filters={gradeFilters}
+				onFilter={(value, record: Student) => {
+					const data = grades.find((obj) => record.gradeId === obj.id) as Grade;
+
+					return value.toString().includes(data.name);
+				}}
 				render={(value, record, index) => {
 					const data = grades.find((obj) => obj.id === value);
 
@@ -200,6 +193,14 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 			<Column
 				title='Пол'
 				dataIndex='genderId'
+				filters={genderFilters}
+				onFilter={(value, record: Student) => {
+					const data = genders.find(
+						(obj) => record.genderId === obj.id,
+					) as Gender;
+
+					return value.toString().includes(data.name);
+				}}
 				render={(value, record, index) => {
 					const data = genders.find((obj) => obj.id === value);
 
@@ -217,12 +218,12 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 			/>
 
 			<Column
-				title='Actions'
+				title='Действия'
 				key='actions'
 				render={(text: any, record: Student) => (
 					<Space size='middle'>
 						<Popconfirm
-							title='Are you sure delete this student?'
+							title='Сигурни ли сте, че искате да изтриете този запис?'
 							okType='danger'
 							onConfirm={async (event) => {
 								const result = await DeleteStudent(record);
@@ -232,10 +233,10 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 							onCancel={(event) => {
 								console.log(text);
 							}}
-							okText='Yes, Delete'
-							cancelText='No, Cancel'>
+							okText='Да, Изтрий'
+							cancelText='Не, Прекъсни'>
 							<Button type='dashed' danger>
-								Delete
+								Изтриване
 							</Button>
 						</Popconfirm>
 
@@ -250,7 +251,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 								borderColor: '#e67e22',
 								color: '#e67e22',
 							}}>
-							Edit
+							Редактиране
 						</Button>
 
 						{activeModalId === record.id && (

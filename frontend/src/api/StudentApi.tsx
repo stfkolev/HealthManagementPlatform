@@ -25,10 +25,11 @@ async function CreateStudent(data: {
 	address: string;
 	phone: string;
 
-	gradeId: bigint;
-	genderId: bigint;
-	medicalInformationId: bigint;
+	gradeId: number;
+	genderId: number;
+	medicalInformationId?: bigint;
 }): Promise<Student> {
+	console.log(typeof data.gradeId);
 	const result = await axios
 		.post(apiUrl('students'), data)
 		.then((response) => response.data);

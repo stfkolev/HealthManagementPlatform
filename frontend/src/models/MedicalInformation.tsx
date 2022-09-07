@@ -2,7 +2,7 @@ export interface MedicalInformation {
 	id: bigint;
 
 	age: number;
-	seats: number;
+	bodyMass: number;
 	heartRate: number;
 	bloodPressure: number;
 	height: number;

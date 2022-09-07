@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchoolSystem.Repositories.Contracts
 {
-    public interface IGradeRepository<T> : IBaseRepository<T>
+    public interface IMedicalInformationRepository<T> : IBaseRepository<T>
     {
     }
 }

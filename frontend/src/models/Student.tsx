@@ -7,5 +7,5 @@ export interface Student {
 
 	gradeId: bigint;
 	genderId: bigint;
-	medicalInformationId: bigint;
+	medicalInformationId?: bigint;
 }

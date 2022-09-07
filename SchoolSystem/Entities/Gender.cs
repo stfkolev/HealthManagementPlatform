@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace SchoolSystem.Models
+namespace SchoolSystem.Entities
 {
     public class Gender
     {

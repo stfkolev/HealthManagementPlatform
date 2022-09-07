@@ -14,9 +14,19 @@ export interface Values {
 	address: string;
 	phone: string;
 
-	gradeId: bigint;
-	genderId: bigint;
-	medicalInformationId: bigint;
+	gradeId: number;
+	genderId: number;
+
+	age: number;
+	bodyMass: number;
+	height: number;
+	bloodPressure: number;
+	heartRate: number;
+
+	bloodType: string;
+
+	studentState: number;
+	vaccinationState: number;
 }
 
 interface StudentCreateFormProps {

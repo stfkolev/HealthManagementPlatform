@@ -21,7 +21,7 @@ async function GetMedicalInformationById(
 
 async function CreateMedicalInformation(data: {
 	age: number;
-	seats: number;
+	bodyMass: number;
 	heartRate: number;
 	bloodPressure: number;
 	height: number;

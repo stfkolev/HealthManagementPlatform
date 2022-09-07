@@ -20,6 +20,7 @@ import {
 	CreateStudentModal,
 	Values,
 } from '../../utilities/modals/students/CreateStudentModal';
+import { CreateMedicalInformation } from '../../api/MedicalInformationApi';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -60,16 +61,53 @@ const StudentsPage = () => {
 		}, 1000);
 	};
 
+	const isMedicalInformationEntered = (values: Values) =>
+		values.age != null ||
+		values.heartRate != null ||
+		values.height != null ||
+		values.bodyMass != null ||
+		values.bloodType != null ||
+		values.bloodPressure != null ||
+		values.studentState != null ||
+		values.vaccinationState != null;
+
 	const onCreate = async (values: Values) => {
+		var medicalInformation = null;
+
+		if (isMedicalInformationEntered(values)) {
+			medicalInformation = await CreateMedicalInformation({
+				age: values.age,
+				heartRate: values.heartRate,
+				height: values.height,
+				bodyMass: values.bodyMass,
+				bloodType: values.bloodType,
+				bloodPressure: values.bloodPressure,
+				studentState: values.studentState,
+				vaccinationState: values.vaccinationState,
+			});
+		}
+
+		console.log(values);
+
 		const result = await CreateStudent({
 			name: values.name,
 
 			address: values.name,
 			phone: values.phone,
 
-			gradeId: values.gradeId,
-			genderId: values.genderId,
-			medicalInformationId: values.medicalInformationId,
+			gradeId: Number(values.gradeId),
+			genderId: Number(values.genderId),
+
+			// age: values.age,
+			// heartRate: values.heartRate,
+			// height: values.height,
+			// bodyMass: values.bodyMass,
+			// bloodType: values.bloodType,
+			// bloodPressure: values.bloodPressure,
+			// studentState: values.studentState,
+			// vaccinationState: values.vaccinationState,
+			medicalInformationId:
+				medicalInformation != null ? medicalInformation.id : undefined,
 		});
 
 		if (result.hasOwnProperty('name')) {
@@ -171,13 +209,13 @@ const StudentsPage = () => {
 
 			<br />
 
-			<Row align='top'>
+			<Row align='top' gutter={[8, 8]}>
 				<Col span={students.length === 0 ? 16 : 10} offset={4}>
 					{studentsTable}
 				</Col>
 				{!loading && students.length !== 0 ? (
 					<Col span={6} offset={1}>
-						<Row align='top'>
+						<Row align='top' gutter={[8, 8]}>
 							<Col span={24}>
 								<Card title='Търсене' bordered={true}>
 									<Search
