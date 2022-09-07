@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Rose } from '@ant-design/charts';
-import { GetCars } from '../../../api/CarApi';
+import { GetCars } from '../../../api/MedicalInformationApi';
 import { GetRents } from '../../../api/RentApi';
 import { GetModels } from '../../../api/ModelApi';
 
