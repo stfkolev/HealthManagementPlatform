@@ -9,6 +9,7 @@ import {
 	Card,
 	Slider,
 	Input,
+	Drawer,
 } from 'antd';
 
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
@@ -32,6 +33,8 @@ const StudentsPage = () => {
 	const [loading, setLoading] = useState(false);
 	const [sliderMin, setSliderMin] = useState(0);
 	const [sliderMax, setSliderMax] = useState(0);
+
+	const [open, setOpen] = useState(false);
 
 	const onEdit = async () => {
 		GetStudents().then((_students) => {
@@ -92,7 +95,7 @@ const StudentsPage = () => {
 		const result = await CreateStudent({
 			name: values.name,
 
-			address: values.name,
+			address: values.address,
 			phone: values.phone,
 
 			gradeId: Number(values.gradeId),
@@ -133,7 +136,7 @@ const StudentsPage = () => {
 	};
 
 	useEffect(() => {
-		document.title = `Полове`;
+		document.title = `Ученици`;
 		setLoading(true);
 		GetStudents().then((_students) => {
 			setStudents(_students);
@@ -206,9 +209,7 @@ const StudentsPage = () => {
 					/>
 				</Col>
 			</Row>
-
 			<br />
-
 			<Row align='top' gutter={[8, 8]}>
 				<Col span={students.length === 0 ? 16 : 10} offset={4}>
 					{studentsTable}
@@ -227,7 +228,7 @@ const StudentsPage = () => {
 											);
 
 											message.loading({
-												content: ' Търсене в записите...',
+												content: 'Търсене в записите...',
 												key,
 											});
 

@@ -7,6 +7,7 @@ import { GetGrades } from '../../../api/GradeApi';
 import Title from 'antd/lib/typography/Title';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 export interface Values {
 	name: string;
@@ -236,6 +237,10 @@ const CreateStudentModal: React.FC<StudentCreateFormProps> = ({
 						<Option value={0}>Ваксиниран</Option>
 						<Option value={1}>Неваксиниран</Option>
 					</Select>
+				</Form.Item>
+
+				<Form.Item name='note' label='Бележка'>
+					<TextArea rows={4} />
 				</Form.Item>
 			</Form>
 		</Modal>

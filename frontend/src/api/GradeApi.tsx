@@ -11,7 +11,7 @@ async function GetGrades(): Promise<Grade[]> {
 
 	return result as Grade[];
 }
-async function GetGradeById(id: bigint): Promise<Grade> {
+async function GetGradeById(id: number): Promise<Grade> {
 	const result = await axios
 		.get(apiUrl('grades') + `/${id}`)
 		.then((response) => response.data);

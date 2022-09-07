@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Space, notification, Popconfirm, Button, message } from 'antd';
+import {
+	Table,
+	Space,
+	notification,
+	Popconfirm,
+	Button,
+	message,
+	Drawer,
+} from 'antd';
 import { Student } from '../../models/Student';
 import { DeleteStudent, UpdateStudent } from '../../api/StudentApi';
 import { EditStudentModal } from '../modals/students/EditStudentModal';
@@ -9,6 +17,7 @@ import { GetGrades } from '../../api/GradeApi';
 import { Gender } from '../../models/Gender';
 import { MedicalInformation } from '../../models/MedicalInformation';
 import { Grade } from '../../models/Grade';
+import StudentDrawer from '../drawers/StudentDrawer';
 
 const { Column } = Table;
 
@@ -31,16 +40,37 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const [open, setOpen] = useState(false);
+
+	const [selectedStudent, setSelectedStudent] = useState<Student>();
+	const [currentStudentGender, setCurrentStudentGender] = useState<Gender>();
+	const [currentStudentGrade, setCurrentStudentGrade] = useState<Grade>();
+	const [currentStudentMedInfo, setCurrentStudentMedInfo] =
+		useState<MedicalInformation>();
+
 	const [genders, setGenders] = useState<Gender[]>([]);
 	const [medicalInformation, setMedicalInformations] = useState<
 		MedicalInformation[]
 	>([]);
 	const [grades, setGrades] = useState<Grade[]>([]);
 	const [visible, setVisible] = useState(false);
-	const [activeModalId, setActiveModalId] = useState(BigInt(0));
+	const [activeModalId, setActiveModalId] = useState(Number(0));
 
 	const [gradeFilters, setGradeFilters] = useState<any[]>([]);
 	const [genderFilters, setGenderFilters] = useState<any[]>([]);
+
+	const setCurrentStudent = (student: Student) => {
+		const gender = genders.find((obj) => obj.id === student.genderId);
+		const grade = grades.find((obj) => obj.id === student.gradeId);
+		const medicalInfo = medicalInformation.find(
+			(obj) => obj.id === student.medicalInformationId,
+		);
+
+		setCurrentStudentGender(gender);
+		setCurrentStudentGrade(grade);
+		setCurrentStudentMedInfo(medicalInfo);
+		setSelectedStudent(student);
+	};
 
 	useEffect(() => {
 		GetGenders().then((values) => {
@@ -51,9 +81,11 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 			);
 			setGenderFilters(genderFilters);
 		});
+
 		GetMedicalInformations().then((values) => {
 			setMedicalInformations(values);
 		});
+
 		GetGrades().then((values) => {
 			setGrades(values);
 			setGradeFilters([]);
@@ -66,7 +98,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 
 	const onEditInternal = async (
 		values: Student,
-		medicalInformation: MedicalInformation,
+		medicalInformation?: MedicalInformation,
 	) => {
 		const result = await UpdateStudent({
 			id: values.id,
@@ -75,8 +107,8 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 			address: values.address,
 			phone: values.phone,
 
-			gradeId: values.gradeId,
-			genderId: values.genderId,
+			gradeId: Number(values.gradeId),
+			genderId: Number(values.genderId),
 			medicalInformationId: values.medicalInformationId,
 		});
 
@@ -96,178 +128,203 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 		}
 
 		setVisible(false);
-		setActiveModalId(BigInt(0));
+		setActiveModalId(Number(0));
 	};
 	return (
-		<Table dataSource={students} rowKey='id'>
-			<Column
-				title='Идентификатор'
-				dataIndex='id'
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
-
-							openNotification(student);
-						},
-					};
-				}}
+		<>
+			<StudentDrawer
+				student={selectedStudent}
+				currentGender={currentStudentGender}
+				currentGrade={currentStudentGrade}
+				medicalInformation={currentStudentMedInfo}
+				open={open}
+				onClose={() => setOpen(false)}
 			/>
+			<Table dataSource={students} rowKey='id'>
+				<Column
+					title='Идентификатор'
+					dataIndex='id'
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
 
-			<Column
-				title='Имена'
-				dataIndex='name'
-				sorter={(left: Student, right: Student) => {
-					return left.name.localeCompare(right.name);
-				}}
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
+								setOpen(true);
+								setCurrentStudent(student);
 
-							openNotification(student);
-						},
-					};
-				}}
-			/>
+								openNotification(student);
+							},
+						};
+					}}
+				/>
 
-			<Column
-				title='Адрес'
-				dataIndex='address'
-				sorter={(left: Student, right: Student) => {
-					return left.address.localeCompare(right.address);
-				}}
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
+				<Column
+					title='Имена'
+					dataIndex='name'
+					sorter={(left: Student, right: Student) => {
+						return left.name.localeCompare(right.name);
+					}}
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
+								setOpen(true);
 
-							openNotification(student);
-						},
-					};
-				}}
-			/>
+								setCurrentStudent(student);
+								openNotification(student);
+							},
+						};
+					}}
+				/>
 
-			<Column
-				title='Телефон'
-				dataIndex='phone'
-				sorter={(left: Student, right: Student) => {
-					return left.address.localeCompare(right.address);
-				}}
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
+				<Column
+					title='Адрес'
+					dataIndex='address'
+					sorter={(left: Student, right: Student) => {
+						return left.address.localeCompare(right.address);
+					}}
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
 
-							openNotification(student);
-						},
-					};
-				}}
-			/>
+								setOpen(true);
+								setCurrentStudent(student);
 
-			<Column
-				title='Клас'
-				dataIndex='gradeId'
-				filters={gradeFilters}
-				onFilter={(value, record: Student) => {
-					const data = grades.find((obj) => record.gradeId === obj.id) as Grade;
+								openNotification(student);
+							},
+						};
+					}}
+				/>
 
-					return value.toString().includes(data.name);
-				}}
-				render={(value, record, index) => {
-					const data = grades.find((obj) => obj.id === value);
+				<Column
+					title='Телефон'
+					dataIndex='phone'
+					sorter={(left: Student, right: Student) => {
+						return left.address.localeCompare(right.address);
+					}}
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
+								setOpen(true);
+								setCurrentStudent(student);
+								openNotification(student);
+							},
+						};
+					}}
+				/>
 
-					return data === undefined ? value : data.name;
-				}}
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
+				<Column
+					title='Клас'
+					dataIndex='gradeId'
+					filters={gradeFilters}
+					onFilter={(value, record: Student) => {
+						const data = grades.find(
+							(obj) => record.gradeId === obj.id,
+						) as Grade;
 
-							openNotification(student);
-						},
-					};
-				}}
-			/>
+						return value.toString().includes(data.name);
+					}}
+					render={(value, record, index) => {
+						const data = grades.find((obj) => obj.id === value);
 
-			<Column
-				title='Пол'
-				dataIndex='genderId'
-				filters={genderFilters}
-				onFilter={(value, record: Student) => {
-					const data = genders.find(
-						(obj) => record.genderId === obj.id,
-					) as Gender;
+						return data === undefined ? value : data.name;
+					}}
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
+								setOpen(true);
+								setCurrentStudent(student);
+								openNotification(student);
+							},
+						};
+					}}
+				/>
 
-					return value.toString().includes(data.name);
-				}}
-				render={(value, record, index) => {
-					const data = genders.find((obj) => obj.id === value);
+				<Column
+					title='Пол'
+					dataIndex='genderId'
+					filters={genderFilters}
+					onFilter={(value, record: Student) => {
+						const data = genders.find(
+							(obj) => record.genderId === obj.id,
+						) as Gender;
 
-					return data === undefined ? value : data.name;
-				}}
-				onCell={(record, rowIndex) => {
-					return {
-						onClick: (event) => {
-							const student = record as Student;
+						return value.toString().includes(data.name);
+					}}
+					render={(value, record, index) => {
+						const data = genders.find((obj) => obj.id === value);
 
-							openNotification(student);
-						},
-					};
-				}}
-			/>
+						return data === undefined ? value : data.name;
+					}}
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
 
-			<Column
-				title='Действия'
-				key='actions'
-				render={(text: any, record: Student) => (
-					<Space size='middle'>
-						<Popconfirm
-							title='Сигурни ли сте, че искате да изтриете този запис?'
-							okType='danger'
-							onConfirm={async (event) => {
-								const result = await DeleteStudent(record);
+								setOpen(true);
+								setCurrentStudent(student);
 
-								onDelete(result as Student);
-							}}
-							onCancel={(event) => {
-								console.log(text);
-							}}
-							okText='Да, Изтрий'
-							cancelText='Не, Прекъсни'>
-							<Button type='dashed' danger>
-								Изтриване
-							</Button>
-						</Popconfirm>
+								openNotification(student);
+							},
+						};
+					}}
+				/>
 
-						<Button
-							type='dashed'
-							danger
-							onClick={() => {
-								setActiveModalId(record.id);
-								setVisible(true);
-							}}
-							style={{
-								borderColor: '#e67e22',
-								color: '#e67e22',
-							}}>
-							Редактиране
-						</Button>
+				<Column
+					title='Действия'
+					key='actions'
+					render={(text: any, record: Student) => (
+						<Space size='middle'>
+							<Popconfirm
+								title='Сигурни ли сте, че искате да изтриете този запис?'
+								okType='danger'
+								onConfirm={async (event) => {
+									const result = await DeleteStudent(record);
 
-						{activeModalId === record.id && (
-							<EditStudentModal
-								student={record}
-								visible={visible}
-								onEdit={onEditInternal}
-								onCancel={() => {
-									setVisible(false);
+									onDelete(result as Student);
 								}}
-							/>
-						)}
-					</Space>
-				)}
-			/>
-		</Table>
+								onCancel={(event) => {
+									console.log(text);
+								}}
+								okText='Да, Изтрий'
+								cancelText='Не, Прекъсни'>
+								<Button type='dashed' danger>
+									Изтриване
+								</Button>
+							</Popconfirm>
+
+							<Button
+								type='dashed'
+								danger
+								onClick={() => {
+									setActiveModalId(record.id);
+									setVisible(true);
+								}}
+								style={{
+									borderColor: '#e67e22',
+									color: '#e67e22',
+								}}>
+								Редактиране
+							</Button>
+
+							{activeModalId === record.id && (
+								<EditStudentModal
+									student={record}
+									visible={visible}
+									onEdit={onEditInternal}
+									onCancel={() => {
+										setVisible(false);
+									}}
+								/>
+							)}
+						</Space>
+					)}
+				/>
+			</Table>
+		</>
 	);
 };
 

@@ -1,4 +1,4 @@
 export interface Gender {
-	id: bigint;
+	id: number;
 	name: string;
 }

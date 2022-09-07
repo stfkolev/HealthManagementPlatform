@@ -11,7 +11,7 @@ async function GetStudents(): Promise<Student[]> {
 
 	return result as Student[];
 }
-async function GetStudentById(id: bigint): Promise<Student> {
+async function GetStudentById(id: number): Promise<Student> {
 	const result = await axios
 		.get(apiUrl('students') + `/${id}`)
 		.then((response) => response.data);
@@ -27,7 +27,7 @@ async function CreateStudent(data: {
 
 	gradeId: number;
 	genderId: number;
-	medicalInformationId?: bigint;
+	medicalInformationId?: number;
 }): Promise<Student> {
 	console.log(typeof data.gradeId);
 	const result = await axios

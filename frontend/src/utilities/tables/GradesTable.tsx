@@ -26,7 +26,7 @@ const GradesTable: React.FC<GradesTableProps> = ({
 	onDelete,
 }) => {
 	const [visible, setVisible] = useState(false);
-	const [activeModalId, setActiveModalId] = useState(BigInt(0));
+	const [activeModalId, setActiveModalId] = useState(Number(0));
 
 	const onEditInternal = async (values: Grade) => {
 		const result = await UpdateGrade({ id: values.id, name: values.name });
@@ -47,7 +47,7 @@ const GradesTable: React.FC<GradesTableProps> = ({
 		}
 
 		setVisible(false);
-		setActiveModalId(BigInt(0));
+		setActiveModalId(Number(0));
 	};
 	return (
 		<Table dataSource={grades} rowKey='id'>

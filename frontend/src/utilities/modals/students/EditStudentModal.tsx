@@ -7,13 +7,14 @@ import { Grade } from '../../../models/Grade';
 import { GetGenders } from '../../../api/GenderApi';
 import { GetGrades } from '../../../api/GradeApi';
 import Title from 'antd/lib/typography/Title';
+import { GetMedicalInformationById } from '../../../api/MedicalInformationApi';
 
 const { Option } = Select;
 
 interface StudentEditFormProps {
 	student: Student;
 	visible: boolean;
-	onEdit: (values: Student, medicalInformation: MedicalInformation) => void;
+	onEdit: (values: Student, medicalInformation?: MedicalInformation) => void;
 	onCancel: () => void;
 }
 
@@ -24,8 +25,11 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 	onCancel,
 }) => {
 	const [form] = Form.useForm();
+
 	const [genders, setGenders] = useState<Gender[]>([]);
 	const [grades, setGrades] = useState<Grade[]>([]);
+	const [temporaryMedicalInfo, setTemporaryMedicalInfo] =
+		useState<MedicalInformation>();
 
 	useEffect(() => {
 		GetGenders().then((values) => {
@@ -34,6 +38,12 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 		GetGrades().then((values) => {
 			setGrades(values);
 		});
+
+		if (student.medicalInformationId != null) {
+			const data = GetMedicalInformationById(
+				student?.medicalInformationId,
+			).then((values) => setTemporaryMedicalInfo(values));
+		}
 	}, []);
 
 	useEffect(() => {
@@ -53,7 +63,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 					.then((values) => {
 						form.resetFields();
 
-						onEdit(values as Student, null);
+						onEdit(values as Student, temporaryMedicalInfo);
 					})
 					.catch((info) => {
 						console.log('Validate Failed:', info);
@@ -64,7 +74,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 					name='id'
 					label='Идентификатор на ученика'
 					rules={[{ required: true }]}>
-					<Input disabled />
+					<Input disabled value={student.id} />
 				</Form.Item>
 
 				<Form.Item

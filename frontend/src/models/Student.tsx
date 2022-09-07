@@ -1,11 +1,11 @@
 export interface Student {
-	id: bigint;
+	id: number;
 	name: string;
 
 	address: string;
 	phone: string;
 
-	gradeId: bigint;
-	genderId: bigint;
-	medicalInformationId?: bigint;
+	gradeId: number;
+	genderId: number;
+	medicalInformationId?: number;
 }

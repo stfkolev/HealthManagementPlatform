@@ -1,5 +1,5 @@
 export interface MedicalInformation {
-	id: bigint;
+	id: number;
 
 	age: number;
 	bodyMass: number;
@@ -8,6 +8,7 @@ export interface MedicalInformation {
 	height: number;
 
 	bloodType: string;
+	note: string;
 
 	studentState: number;
 	vaccinationState: number;

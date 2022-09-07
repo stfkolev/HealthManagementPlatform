@@ -11,7 +11,7 @@ async function GetGenders(): Promise<Gender[]> {
 
 	return result as Gender[];
 }
-async function GetGenderById(id: bigint): Promise<Gender> {
+async function GetGenderById(id: number): Promise<Gender> {
 	const result = await axios
 		.get(apiUrl('genders') + `/${id}`)
 		.then((response) => response.data);
