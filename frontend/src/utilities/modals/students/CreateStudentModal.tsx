@@ -26,6 +26,7 @@ export interface Values {
 
 	bloodType: string;
 
+	studentId: number;
 	studentState: number;
 	vaccinationState: number;
 }

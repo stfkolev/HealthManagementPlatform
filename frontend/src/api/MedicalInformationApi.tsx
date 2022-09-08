@@ -28,6 +28,7 @@ async function CreateMedicalInformation(data: {
 
 	bloodType: string;
 
+	studentId: number;
 	studentState: number;
 	vaccinationState: number;
 }): Promise<MedicalInformation> {

@@ -15,6 +15,7 @@ import { GetGenders } from '../../api/GenderApi';
 import {
 	CreateMedicalInformation,
 	GetMedicalInformations,
+	UpdateMedicalInformation,
 } from '../../api/MedicalInformationApi';
 import { GetGrades } from '../../api/GradeApi';
 import { Gender } from '../../models/Gender';
@@ -108,6 +109,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 			values.medicalInformationId === null ||
 			values.medicalInformationId === undefined
 		) {
+			medicalInformation.studentId = values.id;
 			newMedicalInfo = await CreateMedicalInformation(medicalInformation);
 		}
 		const result = await UpdateStudent({
@@ -125,7 +127,11 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 					: newMedicalInfo.id,
 		});
 
-		if (result === true) {
+		const medicalInfoResult = await UpdateMedicalInformation(
+			medicalInformation,
+		);
+
+		if (result === true && medicalInfoResult == true) {
 			const key = 'studentEdit';
 
 			message.loading({ content: 'Зареждане...', key });
@@ -271,6 +277,51 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 						const data = genders.find((obj) => obj.id === value);
 
 						return data === undefined ? value : data.name;
+					}}
+					onCell={(record, rowIndex) => {
+						return {
+							onClick: (event) => {
+								const student = record as Student;
+
+								setOpen(true);
+								setCurrentStudent(student);
+
+								openNotification(student);
+							},
+						};
+					}}
+				/>
+
+				<Column
+					title='Състояние'
+					dataIndex='medicalInformationId'
+					filters={[
+						{
+							text: 'Здрав',
+							value: 'Здрав',
+						},
+						{
+							text: 'Болен',
+							value: 'Болен',
+						},
+					]}
+					onFilter={(value, record: Student) => {
+						const data = medicalInformation.find(
+							(obj) => record.medicalInformationId === obj.id,
+						) as MedicalInformation;
+
+						return value
+							.toString()
+							.includes(data.studentState === 0 ? 'Здрав' : 'Болен');
+					}}
+					render={(value, record, index) => {
+						const data = medicalInformation.find((obj) => obj.id === value);
+
+						return data === undefined
+							? value
+							: data.studentState === 0
+							? 'Здрав'
+							: 'Болен';
 					}}
 					onCell={(record, rowIndex) => {
 						return {

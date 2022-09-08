@@ -21,7 +21,10 @@ import {
 	CreateStudentModal,
 	Values,
 } from '../../utilities/modals/students/CreateStudentModal';
-import { CreateMedicalInformation } from '../../api/MedicalInformationApi';
+import {
+	CreateMedicalInformation,
+	GetMedicalInformations,
+} from '../../api/MedicalInformationApi';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -85,12 +88,11 @@ const StudentsPage = () => {
 				bodyMass: values.bodyMass,
 				bloodType: values.bloodType,
 				bloodPressure: values.bloodPressure,
+				studentId: values.studentId,
 				studentState: values.studentState,
 				vaccinationState: values.vaccinationState,
 			});
 		}
-
-		console.log(values);
 
 		const result = await CreateStudent({
 			name: values.name,
@@ -215,8 +217,8 @@ const StudentsPage = () => {
 					{studentsTable}
 				</Col>
 				{!loading && students.length !== 0 ? (
-					<Col span={6} offset={1}>
-						<Row align='top' gutter={[8, 8]}>
+					<Col span={6} offset={3}>
+						<Row align='top' justify='end' gutter={[8, 8]}>
 							<Col span={24}>
 								<Card title='Търсене' bordered={true}>
 									<Search

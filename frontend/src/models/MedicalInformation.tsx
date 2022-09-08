@@ -1,5 +1,6 @@
 export interface MedicalInformation {
 	id: number;
+	studentId: number;
 
 	age: number;
 	bodyMass: number;

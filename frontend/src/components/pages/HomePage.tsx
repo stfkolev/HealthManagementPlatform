@@ -208,10 +208,10 @@ function HomePage() {
 						}}>
 						<Statistic
 							title='Средна възраст'
-							value={
+							value={(
 								medicalInfo.reduce((a, { age }) => a + age, 0) /
 								medicalInfo.length
-							}
+							).toFixed(2)}
 							prefix={<DeploymentUnitOutlined />}
 						/>
 					</Card>
@@ -227,10 +227,10 @@ function HomePage() {
 						}}>
 						<Statistic
 							title='Среден сърдечен ритъм'
-							value={
+							value={(
 								medicalInfo.reduce((a, { heartRate }) => a + heartRate, 0) /
 								medicalInfo.length
-							}
+							).toFixed(2)}
 							prefix={<HeartOutlined />}
 						/>
 					</Card>
@@ -246,12 +246,12 @@ function HomePage() {
 						}}>
 						<Statistic
 							title='Средно кръвно налягане'
-							value={
+							value={(
 								medicalInfo.reduce(
 									(a, { bloodPressure }) => a + bloodPressure,
 									0,
 								) / medicalInfo.length
-							}
+							).toFixed(2)}
 							prefix={<NodeExpandOutlined />}
 						/>
 					</Card>
@@ -267,10 +267,10 @@ function HomePage() {
 						}}>
 						<Statistic
 							title='Средно тегло (кг)'
-							value={
+							value={(
 								medicalInfo.reduce((a, { bodyMass }) => a + bodyMass, 0) /
 								medicalInfo.length
-							}
+							).toFixed(2)}
 							prefix={<ScanOutlined />}
 						/>
 					</Card>
@@ -286,10 +286,10 @@ function HomePage() {
 						}}>
 						<Statistic
 							title='Средна височина (cm)'
-							value={
+							value={(
 								medicalInfo.reduce((a, { height }) => a + height, 0) /
 								medicalInfo.length
-							}
+							).toFixed(2)}
 							prefix={<RiseOutlined />}
 						/>
 					</Card>

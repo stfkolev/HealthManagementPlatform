@@ -40,8 +40,24 @@ namespace SchoolSystem.Repositories
         public async Task<Student> Update(int id, Student obj)
         {
             mainContext.Entry(obj).State = EntityState.Modified;
+        
             //result.Name = obj.Name;
-            await mainContext.SaveChangesAsync();
+
+            try
+            {
+                await mainContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!mainContext.Students.Any(e => e.Id == id))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return null;
         }

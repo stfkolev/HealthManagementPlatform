@@ -57,6 +57,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 					.then((values) => {
 						form.resetFields();
 						const localMedicalInfo = {
+							id: values.medicalInformationId,
 							age: values.age,
 							bodyMass: values.bodyMass,
 							heartRate: values.heartRate,
@@ -65,9 +66,12 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 
 							bloodType: values.bloodType,
 
+							studentId: values.id,
 							studentState: values.studentState,
 							vaccinationState: values.vaccinationState,
 						} as MedicalInformation;
+
+						console.log({ localMedicalInfo });
 						onEdit(values as Student, localMedicalInfo);
 					})
 					.catch((info) => {
