@@ -48,7 +48,7 @@ async function DeleteStudent(Student: Student): Promise<Student> {
 }
 
 async function UpdateStudent(Student: Student): Promise<Boolean> {
-	console.log(Student);
+	console.log({ Student });
 	const result = await axios
 		.put(apiUrl('students') + `/${Student.id}`, Student)
 		.then((response) => response.status === 204);

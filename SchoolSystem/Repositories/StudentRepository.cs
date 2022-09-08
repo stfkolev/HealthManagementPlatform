@@ -39,9 +39,12 @@ namespace SchoolSystem.Repositories
 
         public async Task<Student> Update(int id, Student obj)
         {
+            if(id != obj.Id)
+            {
+                return null;
+            }
+
             mainContext.Entry(obj).State = EntityState.Modified;
-        
-            //result.Name = obj.Name;
 
             try
             {

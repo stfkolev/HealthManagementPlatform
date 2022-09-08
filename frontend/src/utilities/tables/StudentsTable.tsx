@@ -112,6 +112,8 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 			medicalInformation.studentId = values.id;
 			newMedicalInfo = await CreateMedicalInformation(medicalInformation);
 		}
+
+		console.log({ values });
 		const result = await UpdateStudent({
 			id: values.id,
 			name: values.name,
@@ -126,6 +128,8 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 					? values.medicalInformationId
 					: newMedicalInfo.id,
 		});
+
+		console.log({ result });
 
 		const medicalInfoResult = await UpdateMedicalInformation(
 			medicalInformation,

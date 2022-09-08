@@ -9,6 +9,6 @@ namespace SchoolSystem.Entities.Facades
     {
         Healthy = 0,
         Sick = 1,
-        Disabled = 1,
+        Disabled = 2,
     }
 }

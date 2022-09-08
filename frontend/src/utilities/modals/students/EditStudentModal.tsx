@@ -41,7 +41,10 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 	}, []);
 
 	useEffect(() => {
-		form.setFieldsValue({ ...student, ...medicalInformation });
+		const data = { ...medicalInformation };
+		delete data.id;
+
+		form.setFieldsValue({ ...student, ...data });
 	}, [form, student, medicalInformation]);
 
 	return (
@@ -72,6 +75,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 						} as MedicalInformation;
 
 						console.log({ localMedicalInfo });
+						console.log({ values });
 						onEdit(values as Student, localMedicalInfo);
 					})
 					.catch((info) => {
@@ -85,6 +89,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 					rules={[{ required: true }]}>
 					<Input disabled value={student.id} />
 				</Form.Item>
+				{console.log(student)}
 
 				<Form.Item name='medicalInformationId' hidden>
 					<Input hidden disabled value={student.medicalInformationId} />
