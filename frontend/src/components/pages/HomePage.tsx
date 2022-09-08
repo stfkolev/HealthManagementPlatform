@@ -149,7 +149,7 @@ function HomePage() {
 					</Row>
 				</Col>
 
-				<Col span={9}>
+				<Col span={10}>
 					<Card
 						title={'Тегло по възраст'}
 						style={{
@@ -257,7 +257,7 @@ function HomePage() {
 					</Card>
 				</Col>
 
-				<Col span={4}>
+				<Col span={5}>
 					<Card
 						style={{
 							background: '#ff7675',
