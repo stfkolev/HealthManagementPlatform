@@ -12,7 +12,10 @@ import { Student } from '../../models/Student';
 import { DeleteStudent, UpdateStudent } from '../../api/StudentApi';
 import { EditStudentModal } from '../modals/students/EditStudentModal';
 import { GetGenders } from '../../api/GenderApi';
-import { GetMedicalInformations } from '../../api/MedicalInformationApi';
+import {
+	CreateMedicalInformation,
+	GetMedicalInformations,
+} from '../../api/MedicalInformationApi';
 import { GetGrades } from '../../api/GradeApi';
 import { Gender } from '../../models/Gender';
 import { MedicalInformation } from '../../models/MedicalInformation';
@@ -98,8 +101,15 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 
 	const onEditInternal = async (
 		values: Student,
-		medicalInformation?: MedicalInformation,
+		medicalInformation: MedicalInformation,
 	) => {
+		var newMedicalInfo = null;
+		if (
+			values.medicalInformationId === null ||
+			values.medicalInformationId === undefined
+		) {
+			newMedicalInfo = await CreateMedicalInformation(medicalInformation);
+		}
 		const result = await UpdateStudent({
 			id: values.id,
 			name: values.name,
@@ -109,7 +119,10 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 
 			gradeId: Number(values.gradeId),
 			genderId: Number(values.genderId),
-			medicalInformationId: values.medicalInformationId,
+			medicalInformationId:
+				newMedicalInfo === null
+					? values.medicalInformationId
+					: newMedicalInfo.id,
 		});
 
 		if (result === true) {
@@ -301,6 +314,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 								danger
 								onClick={() => {
 									setActiveModalId(record.id);
+									setCurrentStudent(record);
 									setVisible(true);
 								}}
 								style={{
@@ -313,6 +327,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
 							{activeModalId === record.id && (
 								<EditStudentModal
 									student={record}
+									medicalInformation={currentStudentMedInfo}
 									visible={visible}
 									onEdit={onEditInternal}
 									onCancel={() => {

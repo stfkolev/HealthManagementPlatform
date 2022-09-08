@@ -13,13 +13,15 @@ const { Option } = Select;
 
 interface StudentEditFormProps {
 	student: Student;
+	medicalInformation?: MedicalInformation;
 	visible: boolean;
-	onEdit: (values: Student, medicalInformation?: MedicalInformation) => void;
+	onEdit: (values: Student, medicalInformation: MedicalInformation) => void;
 	onCancel: () => void;
 }
 
 const EditStudentModal: React.FC<StudentEditFormProps> = ({
 	student,
+	medicalInformation,
 	visible,
 	onEdit,
 	onCancel,
@@ -28,8 +30,6 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 
 	const [genders, setGenders] = useState<Gender[]>([]);
 	const [grades, setGrades] = useState<Grade[]>([]);
-	const [temporaryMedicalInfo, setTemporaryMedicalInfo] =
-		useState<MedicalInformation>();
 
 	useEffect(() => {
 		GetGenders().then((values) => {
@@ -38,17 +38,11 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 		GetGrades().then((values) => {
 			setGrades(values);
 		});
-
-		if (student.medicalInformationId != null) {
-			const data = GetMedicalInformationById(
-				student?.medicalInformationId,
-			).then((values) => setTemporaryMedicalInfo(values));
-		}
 	}, []);
 
 	useEffect(() => {
-		form.setFieldsValue(student);
-	}, [form, student]);
+		form.setFieldsValue({ ...student, ...medicalInformation });
+	}, [form, student, medicalInformation]);
 
 	return (
 		<Modal
@@ -62,8 +56,19 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 					.validateFields()
 					.then((values) => {
 						form.resetFields();
+						const localMedicalInfo = {
+							age: values.age,
+							bodyMass: values.bodyMass,
+							heartRate: values.heartRate,
+							bloodPressure: values.bloodPressure,
+							height: values.height,
 
-						onEdit(values as Student, temporaryMedicalInfo);
+							bloodType: values.bloodType,
+
+							studentState: values.studentState,
+							vaccinationState: values.vaccinationState,
+						} as MedicalInformation;
+						onEdit(values as Student, localMedicalInfo);
 					})
 					.catch((info) => {
 						console.log('Validate Failed:', info);
@@ -75,6 +80,10 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 					label='Идентификатор на ученика'
 					rules={[{ required: true }]}>
 					<Input disabled value={student.id} />
+				</Form.Item>
+
+				<Form.Item name='medicalInformationId' hidden>
+					<Input hidden disabled value={student.medicalInformationId} />
 				</Form.Item>
 
 				<Form.Item
@@ -110,7 +119,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 							message: 'Моля въведете валиден телефон на ученика!',
 						},
 					]}>
-					<Input placeholder='+359 876 181 954' />
+					<Input placeholder='+359 876 181 954' value={student.phone} />
 				</Form.Item>
 				<Form.Item
 					name='genderId'
@@ -166,13 +175,24 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 				<Title level={4}>Медицинска Информация</Title>
 
 				<Form.Item name='age' label='Възраст'>
-					<InputNumber placeholder='22' style={{ width: '100%' }} />
+					<InputNumber
+						placeholder='22'
+						style={{ width: '100%' }}
+						min={5}
+						value={medicalInformation?.age}
+						max={120}
+					/>
 				</Form.Item>
 
-				<Form.Item name='height' label='Височина'>
+				<Form.Item
+					name='height'
+					label='Височина (cm)'
+					valuePropName=''
+					initialValue={medicalInformation?.height}>
 					<InputNumber
-						min={5}
-						max={120}
+						min={50}
+						max={260}
+						value={medicalInformation?.height}
 						placeholder='184'
 						style={{ width: '100%' }}
 					/>
@@ -184,6 +204,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 						max={700}
 						placeholder='90'
 						style={{ width: '100%' }}
+						value={medicalInformation?.bodyMass}
 					/>
 				</Form.Item>
 
@@ -193,6 +214,7 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 						max={480}
 						placeholder='80'
 						style={{ width: '100%' }}
+						value={medicalInformation?.heartRate}
 					/>
 				</Form.Item>
 
@@ -202,11 +224,12 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 						max={160}
 						placeholder='80'
 						style={{ width: '100%' }}
+						value={medicalInformation?.bloodPressure}
 					/>
 				</Form.Item>
 
 				<Form.Item name='bloodType' label='Кръвна Група'>
-					<Input placeholder='0-' />
+					<Input placeholder='0-' value={medicalInformation?.bloodType} />
 				</Form.Item>
 
 				<Form.Item name='studentState' label='Здравно Състояние'>
@@ -219,7 +242,8 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 							(option!.children as unknown as string)
 								.toLowerCase()
 								.includes(input.toLowerCase())
-						}>
+						}
+						value={medicalInformation?.studentState}>
 						<Option value={0}>Здрав</Option>
 						<Option value={1}>Болен</Option>
 					</Select>
@@ -235,7 +259,8 @@ const EditStudentModal: React.FC<StudentEditFormProps> = ({
 							(option!.children as unknown as string)
 								.toLowerCase()
 								.includes(input.toLowerCase())
-						}>
+						}
+						value={medicalInformation?.vaccinationState}>
 						<Option value={0}>Ваксиниран</Option>
 						<Option value={1}>Неваксиниран</Option>
 					</Select>
