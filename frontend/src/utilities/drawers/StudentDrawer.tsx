@@ -193,7 +193,6 @@ const StudentDrawer: React.FC<GenericProps> = ({
 					</Col>
 				</Row>
 			</Drawer>
-			;
 		</>
 	);
 };

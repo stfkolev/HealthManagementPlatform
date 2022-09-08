@@ -1,4 +1,4 @@
-import { Row, Col, Typography, Statistic, Card } from 'antd';
+import { Row, Col, Typography, Statistic, Card, List } from 'antd';
 import {
 	BankOutlined,
 	BgColorsOutlined,
@@ -31,6 +31,7 @@ import { Area, Radar } from '@ant-design/charts';
 import { Student } from '../../models/Student';
 import { MedicalInformation } from '../../models/MedicalInformation';
 import { GetMedicalInformations } from '../../api/MedicalInformationApi';
+import { Grade } from '../../models/Grade';
 
 const { Title } = Typography;
 
@@ -40,14 +41,21 @@ function HomePage() {
 	const [studentsCount, setStudentsCount] = useState(0);
 
 	const [students, setStudents] = useState<Student[]>([]);
+	const [grades, setGrades] = useState<Grade[]>([]);
 	const [medicalInfo, setMedicalInfo] = useState<MedicalInformation[]>([]);
 
 	useEffect(() => {
 		document.title = `Начало | Задание 25`;
 
 		GetGenders().then((values) => setGendersCount(values.length));
-		GetGrades().then((values) => setGradesCount(values.length));
-		GetStudents().then((values) => setStudentsCount(values.length));
+		GetGrades().then((values) => {
+			setGradesCount(values.length);
+			setGrades(values);
+		});
+		GetStudents().then((values) => {
+			setStudentsCount(values.length);
+			setStudents(values);
+		});
 
 		GetMedicalInformations().then((values) => setMedicalInfo(values));
 	}, []);
@@ -68,7 +76,7 @@ function HomePage() {
 				justify='start'
 				align='top'
 				gutter={[16, 16]}
-				style={{ marginTop: 32 }}>
+				style={{ marginTop: 32, marginBottom: 32 }}>
 				<Col span={4} offset={1}>
 					<Row gutter={[16, 16]}>
 						<Col span={24}>
@@ -170,8 +178,8 @@ function HomePage() {
 								}}>
 								<Radar
 									data={medicalInfo}
-									xField={'height'}
-									yField={'bodyMass'}
+									xField={'age'}
+									yField={'heartRate'}
 									point={{
 										size: 2,
 									}}
@@ -212,13 +220,13 @@ function HomePage() {
 				<Col span={4}>
 					<Card
 						style={{
-							background: '#8AC185',
+							background: '#00cec9',
 							borderRadius: '12pt',
 							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
 							border: 0,
 						}}>
 						<Statistic
-							title='Среден сърдечен пулс'
+							title='Среден сърдечен ритъм'
 							value={
 								medicalInfo.reduce((a, { heartRate }) => a + heartRate, 0) /
 								medicalInfo.length
@@ -231,7 +239,7 @@ function HomePage() {
 				<Col span={4}>
 					<Card
 						style={{
-							background: '#8AC185',
+							background: '#fdcb6e',
 							borderRadius: '12pt',
 							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
 							border: 0,
@@ -252,7 +260,7 @@ function HomePage() {
 				<Col span={4}>
 					<Card
 						style={{
-							background: '#8AC185',
+							background: '#ff7675',
 							borderRadius: '12pt',
 							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
 							border: 0,
@@ -271,7 +279,7 @@ function HomePage() {
 				<Col span={6}>
 					<Card
 						style={{
-							background: '#8AC185',
+							background: '#a29bfe',
 							borderRadius: '12pt',
 							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
 							border: 0,
@@ -283,6 +291,79 @@ function HomePage() {
 								medicalInfo.length
 							}
 							prefix={<RiseOutlined />}
+						/>
+					</Card>
+				</Col>
+				<Col span={7} offset={1}>
+					<Card
+						title='Последно добавени ученици'
+						style={{
+							borderRadius: '12pt',
+							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
+							border: 0,
+						}}>
+						<List
+							itemLayout='horizontal'
+							dataSource={students.reverse().slice(0, 5)}
+							renderItem={(item) => (
+								<List.Item>
+									<List.Item.Meta
+										title={item.name}
+										description={
+											medicalInfo.find(
+												(obj) => obj.id === item.medicalInformationId,
+											)?.studentState === 0
+												? 'Ваксиниран'
+												: 'Неваксиниран'
+										}
+									/>
+								</List.Item>
+							)}
+						/>
+					</Card>
+				</Col>
+				<Col span={8}>
+					<Card
+						title='Тегло по височина'
+						style={{
+							borderRadius: '12pt',
+							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
+							border: 0,
+						}}>
+						<Radar
+							data={medicalInfo}
+							xField={'height'}
+							yField={'bodyMass'}
+							autoFit={true}
+							appendPadding={[0, 10, 0, 10]}
+							point={{
+								size: 2,
+							}}
+							xAxis={{
+								tickLine: null,
+							}}
+							yAxis={{
+								label: false,
+								grid: {
+									alternateColor: 'rgba(0, 0, 0, 0.04)',
+								},
+							}}
+						/>
+					</Card>
+				</Col>
+				<Col span={8}>
+					<Card
+						title={'Височина по възраст'}
+						style={{
+							borderRadius: '12pt',
+							boxShadow: '0pt 0pt 15pt rgba(0, 0, 0, 0.15)',
+							border: 0,
+						}}>
+						<Area
+							data={medicalInfo}
+							xField={'age'}
+							yField={'height'}
+							areaStyle={{ fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff' }}
 						/>
 					</Card>
 				</Col>
